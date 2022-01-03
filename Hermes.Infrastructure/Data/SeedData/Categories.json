@@ -1,0 +1,18 @@
+[
+    {
+        "id" : 1,
+        "Name": "Local"
+    },
+    {
+        "id" : 2,
+        "Name": "Estatal"
+    },
+    {
+        "id" : 3,
+        "Name": "Nacional"
+    },
+    {
+        "id" : 4,
+        "Name": "Internacional"
+    }
+]
