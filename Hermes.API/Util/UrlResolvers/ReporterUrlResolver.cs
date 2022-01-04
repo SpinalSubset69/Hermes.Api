@@ -19,7 +19,7 @@ namespace Hermes.API.Util.UrlResolvers
             //Check if image name is null
             if (!string.IsNullOrEmpty(source.Image))
             {
-                   return _configuration["ApiUrl"] + "uploads/reporters/" + source.Image;
+                   return _configuration["ApiUrl"] + "uploads/reporter/" + source.Image;
             }
 
             return  null;

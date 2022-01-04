@@ -21,7 +21,7 @@ namespace Hermes.Infrastructure.Repositories.Impl
 
         public Task<Article> FindArticleByIdAsync(int id)
         {
-            return _context.Articles.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return _context.Articles.Where(x => x.Id == id).Include(x => x.Category).Include(x => x.Reporter).FirstOrDefaultAsync();
         }
     }
 }

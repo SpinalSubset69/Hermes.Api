@@ -38,33 +38,34 @@ namespace Hermes.API.Services
         public async Task<ArticleToReturnDto> AddArticle(RegisterArticle articleFromBody)
         {
             var article = _mapper.Map<RegisterArticle, Article>(articleFromBody);
+            article.Created_At = DateTime.Now;
             _unitOfWork.Articles.SaveEntity(article);
             await _unitOfWork.SaveChangesAsync();
             return _mapper.Map<Article, ArticleToReturnDto>(article);
         }
 
-        //public async Task<string> UploadArticleImagesBasedOnArticleId(int id, List<IFormFile> files)
-        //{
-        //    var spec = new ArticleWithIncludesByIdSpecification(id);
-        //    var article = await _unitOfWork.Articles.FindByIdAsync(spec);
-         
-        //    if(article != null)
-        //    {
-        //        article.Images = new List<Image>();
-        //        foreach(var file in files)
-        //        {
-        //            var image = new Image();
-        //            image.Name =  FileHandler.SaveFileOnDirectory(_webHostEnvironment.WebRootPath, "Articles", file);
-        //            image.ArticleId = article.Id;
-        //            article.Images.Add(image);
-        //            _unitOfWork.Images.SaveEntity(image);
-        //            _unitOfWork.Articles.UpdateEntity(article);
-        //        }
-        //        await _unitOfWork.SaveChangesAsync();
-        //        return "Image Saved on DB";
-        //    }
-        //    throw new NotFoundException("Article Not Found");
-        //}
+        public async Task<string> UploadArticleImagesBasedOnArticleId(int id, InputImageRequest[] files)
+        {
+            var spec = new ArticleWithIncludesByIdSpecification(id);
+            var article = await _unitOfWork.Articles.FindByIdAsync(spec);
+
+            if (article != null)
+            {
+                article.Images = new List<Image>();
+                foreach (var file in files)
+                {
+                    var image = new Image();
+                    image.Name = await FileHandler.SaveFileOnDirectory(_webHostEnvironment.WebRootPath, "Articles", file.Content, file.FilePathOrFileName );
+                    image.ArticleId = article.Id;
+                    article.Images.Add(image);
+                    _unitOfWork.Images.SaveEntity(image);
+                    _unitOfWork.Articles.UpdateEntity(article);
+                }
+                await _unitOfWork.SaveChangesAsync();
+                return "Image Saved on DB";
+            }
+            throw new NotFoundException("Article Not Found");
+        }
 
         public async Task<ArticleToReturnDto> GetArticleBasedOnId(int id)
         {
@@ -90,6 +91,25 @@ namespace Hermes.API.Services
 
             _unitOfWork.Articles.RemoveEntity(article);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<ArticleToReturnDto> UpdateArticle(int id, RegisterArticle articleToUpdate)
+        {
+            var article = await _unitOfWork.Articles.FindArticleByIdAsync(id);
+
+            if (article == null)
+            {
+                throw new NotFoundException("Article Not Found");
+            }
+
+            article.Title = articleToUpdate.Title;
+            article.Summary = articleToUpdate.Summary;
+            article.Content = articleToUpdate.Content;
+            article.CategoryId = articleToUpdate.CategoryId;
+
+            _unitOfWork.Articles.UpdateEntity(article);
+            await _unitOfWork.SaveChangesAsync();            
+            return _mapper.Map<Article, ArticleToReturnDto>(article);
         }
     }
 }

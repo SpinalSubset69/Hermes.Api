@@ -64,27 +64,27 @@ namespace Hermes.API.Controllers
             }
         }
 
-        //[Authorize]
-        //[HttpPost("uplodaimages/{id}")]
-        //public async Task<JsonResult> PostArticleImages(int id, [FromForm] ImageUpload files)
-        //{
-        //    try
-        //    {
-        //        if (files.FilesList != null)
-        //        {
-        //            var result = await _articleService.UploadArticleImagesBasedOnArticleId(id, files.FilesList);
-        //            return new JsonResult(new
-        //            {
-        //                message = result
-        //            });
-        //        }
-        //        return new JsonResult(new { message = "Must Provide Images" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return HttpHandleErrors("Error On Server", ex);
-        //    }
-        //}
+        [Authorize]
+        [HttpPost("uplodaimages/{id}")]
+        public async Task<JsonResult> PostArticleImages(int id, [FromBody] InputImageRequest[] files)
+        {
+            try
+            {
+                if (files.Length != 0)
+                {
+                    var result = await _articleService.UploadArticleImagesBasedOnArticleId(id, files);
+                    return new JsonResult(new
+                    {
+                        message = result
+                    });
+                }
+                return new JsonResult(new { message = "Must Provide Images" });
+            }
+            catch (Exception ex)
+            {
+                return HttpHandleErrors("Error On Server", ex);
+            }
+        }
 
         [Authorize]
         [HttpDelete("{id}")]
@@ -96,6 +96,22 @@ namespace Hermes.API.Controllers
 
                 return new JsonResult(new { message = "Article Removed"});
             }catch(Exception ex)
+            {
+                return HttpHandleErrors("Error on server", ex);
+            }
+        }
+
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<JsonResult> UpdateArticle(int id, [FromBody]RegisterArticle articleToUpdate)
+        {
+            try
+            {
+                var articleUpdated = await _articleService.UpdateArticle(id, articleToUpdate);
+
+                return ResponseWithData<ArticleToReturnDto>.HttpResponseWithData("ArticleUpdated", articleUpdated);
+            }
+            catch (Exception ex)
             {
                 return HttpHandleErrors("Error on server", ex);
             }
