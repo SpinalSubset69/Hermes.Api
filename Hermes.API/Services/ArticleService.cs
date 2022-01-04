@@ -43,28 +43,28 @@ namespace Hermes.API.Services
             return _mapper.Map<Article, ArticleToReturnDto>(article);
         }
 
-        public async Task<string> UploadArticleImagesBasedOnArticleId(int id, List<IFormFile> files)
-        {
-            var spec = new ArticleWithIncludesByIdSpecification(id);
-            var article = await _unitOfWork.Articles.FindByIdAsync(spec);
+        //public async Task<string> UploadArticleImagesBasedOnArticleId(int id, List<IFormFile> files)
+        //{
+        //    var spec = new ArticleWithIncludesByIdSpecification(id);
+        //    var article = await _unitOfWork.Articles.FindByIdAsync(spec);
          
-            if(article != null)
-            {
-                article.Images = new List<Image>();
-                foreach(var file in files)
-                {
-                    var image = new Image();
-                    image.Name =  FileHandler.SaveFileOnDirectory(_webHostEnvironment.WebRootPath, "Articles", file);
-                    image.ArticleId = article.Id;
-                    article.Images.Add(image);
-                    _unitOfWork.Images.SaveEntity(image);
-                    _unitOfWork.Articles.UpdateEntity(article);
-                }
-                await _unitOfWork.SaveChangesAsync();
-                return "Image Saved on DB";
-            }
-            throw new NotFoundException("Article Not Found");
-        }
+        //    if(article != null)
+        //    {
+        //        article.Images = new List<Image>();
+        //        foreach(var file in files)
+        //        {
+        //            var image = new Image();
+        //            image.Name =  FileHandler.SaveFileOnDirectory(_webHostEnvironment.WebRootPath, "Articles", file);
+        //            image.ArticleId = article.Id;
+        //            article.Images.Add(image);
+        //            _unitOfWork.Images.SaveEntity(image);
+        //            _unitOfWork.Articles.UpdateEntity(article);
+        //        }
+        //        await _unitOfWork.SaveChangesAsync();
+        //        return "Image Saved on DB";
+        //    }
+        //    throw new NotFoundException("Article Not Found");
+        //}
 
         public async Task<ArticleToReturnDto> GetArticleBasedOnId(int id)
         {

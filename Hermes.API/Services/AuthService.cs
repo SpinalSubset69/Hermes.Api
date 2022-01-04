@@ -80,7 +80,7 @@ namespace Hermes.API.Services
             }
 
             var token = GenerateJwt(reporter.Id);
-            var expiresIn = millis();
+            var expiresIn = DateTimeOffset.Now.AddMinutes(30).ToUnixTimeMilliseconds();
 
             var session = new SessionDto(token, expiresIn.ToString());
             return session;
@@ -92,3 +92,4 @@ namespace Hermes.API.Services
         }
     }
 }
+

@@ -50,16 +50,15 @@ namespace Hermes.API.Controllers
 
         [Authorize]
         [HttpPost("fileupload/{id}")]        
-        public async Task<JsonResult> PostReporterUpload(int id, [FromForm]ImageUpload files)
+        public async Task<JsonResult> PostReporterUpload(int id, [FromBody] InputImageRequest files)
         {
             try
             {
-                if(files.File != null)
-                {
-                    var reporterToReturn = await _reporterService.AddReporterImageBasedOnId(id, files.File);
+                    var reporterToReturn = await _reporterService.AddReporterImageBasedOnId(id, files);
                     return ResponseWithData<ReporterToReturnDto>.HttpResponseWithData("Image Saved On DB", reporterToReturn);
-                }
+                
 
+                HttpContext.Response.StatusCode = StatusCodes.Status304NotModified;
                 return new JsonResult(new
                 {
                     message = "An error has ocurred"                    

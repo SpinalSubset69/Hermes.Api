@@ -64,27 +64,27 @@ namespace Hermes.API.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost("uplodaimages/{id}")]
-        public async Task<JsonResult> PostArticleImages(int id, [FromForm] ImageUpload files)
-        {
-            try
-            {
-                if (files.FilesList != null)
-                {
-                    var result = await _articleService.UploadArticleImagesBasedOnArticleId(id, files.FilesList);
-                    return new JsonResult(new
-                    {
-                        message = result
-                    });
-                }
-                return new JsonResult(new { message = "Must Provide Images" });
-            }
-            catch (Exception ex)
-            {
-                return HttpHandleErrors("Error On Server", ex);
-            }
-        }
+        //[Authorize]
+        //[HttpPost("uplodaimages/{id}")]
+        //public async Task<JsonResult> PostArticleImages(int id, [FromForm] ImageUpload files)
+        //{
+        //    try
+        //    {
+        //        if (files.FilesList != null)
+        //        {
+        //            var result = await _articleService.UploadArticleImagesBasedOnArticleId(id, files.FilesList);
+        //            return new JsonResult(new
+        //            {
+        //                message = result
+        //            });
+        //        }
+        //        return new JsonResult(new { message = "Must Provide Images" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return HttpHandleErrors("Error On Server", ex);
+        //    }
+        //}
 
         [Authorize]
         [HttpDelete("{id}")]

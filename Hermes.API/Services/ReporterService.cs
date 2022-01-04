@@ -37,6 +37,13 @@ namespace Hermes.API.Services
 
         public async Task<ReporterToReturnDto> AddReporter(RegisterReporter reporterFromBody)
         {
+            var reporterFromDb = await _unitOfWork.Reporters.GetReporterByEmail(reporterFromBody.Email);
+
+            if(reporterFromDb != null)
+            {
+                throw new ApplicationException("Reporter Already Exists on Database");
+            }
+
             var reporter = _mapper.Map<RegisterReporter, Reporter>(reporterFromBody);
             reporter.Password = Encrypt.GetSha256(reporterFromBody.Password);
             _unitOfWork.Reporters.SaveEntity(reporter);
@@ -45,14 +52,14 @@ namespace Hermes.API.Services
             return _mapper.Map<Reporter ,ReporterToReturnDto>(reporter);
         }
 
-        public async Task<ReporterToReturnDto> AddReporterImageBasedOnId(int reporterId, IFormFile file)
+        public async Task<ReporterToReturnDto> AddReporterImageBasedOnId(int reporterId, InputImageRequest file)
         {
             var spec = new ReporterWithIncludesByIdSpecification(reporterId);
             var reporter = await _unitOfWork.Reporters.FindByIdAsync(spec);
 
             if(reporter != null)
             {
-                var fileName = FileHandler.SaveFileOnDirectory(_webHostEnvironment.WebRootPath, "Reporter", file);
+                var fileName = await FileHandler.SaveFileOnDirectory(_webHostEnvironment.WebRootPath, "Reporter", file.Content, file.FilePathOrFileName);
                 reporter.Image = fileName;
                 _unitOfWork.Reporters.UpdateEntity(reporter);
                 await _unitOfWork.SaveChangesAsync();

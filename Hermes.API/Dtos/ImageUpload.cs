@@ -2,7 +2,7 @@
 {
     public class ImageUpload
     {
-        public IFormFile? File { get; set; }
+        public InputImageRequest? Input { get; set; }
         public List<IFormFile>? FilesList { get; set; }
     }
 }
