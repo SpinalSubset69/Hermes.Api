@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hermes.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(HermesDbContext))]
-    [Migration("20211231012602_InitialMigrate")]
-    partial class InitialMigrate
+    [Migration("20220104201126_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -116,6 +116,10 @@ namespace Hermes.Infrastructure.Data.Migrations
 
                     b.Property<int>("RolId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
                         .IsRequired()

@@ -20,7 +20,7 @@ namespace Hermes.Infrastructure.Repositories.Impl
 
         public async Task<Reporter> GetReporterByEmail(string email)
         {
-            return await _context.Reporters.Where(r => r.Email == email).FirstOrDefaultAsync();
+            return await _context.Reporters.Where(r => r.Email == email).Include(x => x.Role).FirstOrDefaultAsync();
         }
     }
 }

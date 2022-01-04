@@ -45,7 +45,9 @@ namespace Hermes.API.Services
             }
 
             var reporter = _mapper.Map<RegisterReporter, Reporter>(reporterFromBody);
-            reporter.Password = Encrypt.GetSha256(reporterFromBody.Password);
+            Encrypt.GetHMACSHA512(reporterFromBody.Password, out string hashedPassword, out string hashedSalt);
+            reporter.Password = hashedPassword;
+            reporter.Salt = hashedSalt;
             _unitOfWork.Reporters.SaveEntity(reporter);
             await _unitOfWork.SaveChangesAsync();
 

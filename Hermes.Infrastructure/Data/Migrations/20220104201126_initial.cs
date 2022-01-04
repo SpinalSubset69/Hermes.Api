@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Hermes.Infrastructure.Data.Migrations
 {
-    public partial class InitialMigrate : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,6 +45,7 @@ namespace Hermes.Infrastructure.Data.Migrations
                     UserName = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
+                    Salt = table.Column<string>(type: "TEXT", nullable: false),
                     Image = table.Column<string>(type: "TEXT", nullable: true),
                     RolId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
