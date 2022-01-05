@@ -7,6 +7,7 @@ using Hermes.API.Util.Exceptions;
 using Hermes.Core.Interfaces;
 using Hermes.Core.Interfaces.Specifications.Articles;
 using Hermes.Core.Interfaces.Specifications.Reporters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hermes.API.Controllers
@@ -48,8 +49,8 @@ namespace Hermes.API.Controllers
                 return HttpHandleErrors("Server Error", ex);
             }
         }
-
-        [Authorize]
+        
+        [Authorize(Roles ="Reporter")]
         [HttpPost]
         public async Task<JsonResult> PostArticle([FromBody] RegisterArticle articleFromBody)
         {
@@ -63,8 +64,8 @@ namespace Hermes.API.Controllers
                 return HttpHandleErrors("Error On Server", ex);
             }
         }
-
-        [Authorize]
+        
+        [Authorize(Roles = "Reporter")]
         [HttpPost("uplodaimages/{id}")]
         public async Task<JsonResult> PostArticleImages(int id, [FromBody] InputImageRequest[] files)
         {
@@ -86,7 +87,7 @@ namespace Hermes.API.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Reporter")]
         [HttpDelete("{id}")]
         public async Task<JsonResult> DeleteArticle(int id)
         {
@@ -101,7 +102,7 @@ namespace Hermes.API.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Reporter")]
         [HttpPut("{id}")]
         public async Task<JsonResult> UpdateArticle(int id, [FromBody]RegisterArticle articleToUpdate)
         {

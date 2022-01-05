@@ -2,7 +2,7 @@
 using Core.entities;
 using Hermes.API.Dtos;
 using Hermes.API.Services;
-using Hermes.API.Util;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hermes.API.Controllers
@@ -17,36 +17,28 @@ namespace Hermes.API.Controllers
             _authService = authService;
             _mapper = mapper;
         }
-
+        
         [Authorize]
         [HttpGet]
         public async Task<JsonResult> GetReporterFromToken()
         {
             try
             {
-                var reporter = (Reporter)HttpContext.Items["Reporter"];
+                var headerToken = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+                i
+                    f (!headerToken.Contains("bearer"))
+                {
+                    return new JsonResult(new { message = "Must provided a BEARER" });
+                }
 
-                return ResponseWithData<ReporterToReturnDto>.HttpResponseWithData("Reporter", _mapper.Map<Reporter, ReporterToReturnDto>(reporter));
+                var reporter = await _authService.GetReporterbasedOnTokenAsync(headerToken);
+
+                return ResponseWithData<ReporterToReturnDto>.HttpResponseWithData("Reporter", reporter);
             }catch(Exception ex)
             {
                 return HttpHandleErrors("Error on server", ex);
             }
-        }
-
-        [HttpGet("verify")]
-        public async Task<JsonResult> VerifyToken()
-        {
-            try
-            {
-                string token = Request.Headers["X-Access-Token"].FirstOrDefault()?.Split(" ").Last();
-                _authService.VerifyJwt(token);
-
-                return new JsonResult(new { message = "Authorized" });
-            }catch(Exception ex)
-            {
-                return HttpHandleErrors("Error on Server", ex);
-            }
-        }
+        }      
 
         [HttpPost]
         public async Task<JsonResult> Login([FromBody] LoginDto loginInfo)

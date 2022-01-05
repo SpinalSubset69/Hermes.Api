@@ -32,8 +32,7 @@ namespace Hermes.API.Controllers
             return ResponseWithPagination<Category>.HttpResponseWithPagination(
                 new Pagination<Category>(count, categoryParams.PageSize, categoryParams.PageIndex, categories));
         }
-        
-        [Authorize]
+                
         [HttpPost]
         public async Task<ActionResult> PostCategory([FromBody] RegisterCategory categoryFromBody)
         {
@@ -52,8 +51,7 @@ namespace Hermes.API.Controllers
 
             return ResponseWithData<Category>.HttpResponseWithData("Category Saved", category);
         }
-
-        [Authorize]
+        
         [HttpPut("{id}")]
         public async Task<JsonResult> UpateCategory(int id, [FromBody]RegisterCategory categoryFromBody)
         {

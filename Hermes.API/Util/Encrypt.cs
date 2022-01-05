@@ -27,31 +27,31 @@ namespace Hermes.API.Util
         /// <param name="hashedText">Ref out var</param>
         /// <param name="hashedSalt">Ref out var</param>
 
-        public static  void GetHMACSHA512(string plainText, out string hashedText, out string hashedSalt)
-        {
-            using(var hmac = new HMACSHA512())
-            {
-                var saltStream= hmac.Key;
-                var passwordStream = hmac.ComputeHash(Encoding.UTF8.GetBytes(plainText));
+        //public static  void GetHMACSHA512(string plainText, out string hashedText, out string hashedSalt)
+        //{
+        //    using(var hmac = new HMACSHA512())
+        //    {
+        //        var saltStream= hmac.Key;
+        //        var passwordStream = hmac.ComputeHash(Encoding.UTF8.GetBytes(plainText));
 
-                var sb = new StringBuilder();
+        //        var sb = new StringBuilder();
 
-                for (int i = 0; i < saltStream.Length; i++)
-                {
-                    sb.AppendFormat("{0:x2}", saltStream[i]);
-                }
+        //        for (int i = 0; i < saltStream.Length; i++)
+        //        {
+        //            sb.AppendFormat("{0:x2}", saltStream[i]);
+        //        }
 
-                hashedSalt = sb.ToString();
+        //        hashedSalt = sb.ToString();
 
-                sb.Clear();
+        //        sb.Clear();
 
-                for (int i = 0; i < passwordStream.Length; i++)
-                {
-                    sb.AppendFormat("{0:x2}", passwordStream[i]);
-                }
+        //        for (int i = 0; i < passwordStream.Length; i++)
+        //        {
+        //            sb.AppendFormat("{0:x2}", passwordStream[i]);
+        //        }
 
-                hashedText = sb.ToString();
-            }
-        }
+        //        hashedText = sb.ToString();
+        //    }
+        //}
     }
 }

@@ -5,7 +5,14 @@
     "UserName": "alastor69",
     "Password": "Resumiendo69%",
     "Email": "alastorlml@gmail.com",
-    "RolId": 1,
-    "Salt":  "DUMMY TEXT"
+    "RolId": 1
+  },
+  {
+    "Id": 2,
+    "Name": "Juan Luis Garza García",
+    "UserName": "alastor69",
+    "Password": "Resumiendo69%",
+    "Email": "sonic@gmail.com",
+    "RolId": 2
   }
 ]

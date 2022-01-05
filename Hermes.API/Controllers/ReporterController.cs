@@ -6,6 +6,7 @@ using Hermes.API.Util;
 using Hermes.Core.Interfaces;
 using Hermes.Core.Interfaces.Specifications.Articles;
 using Hermes.Core.Interfaces.Specifications.Reporters;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hermes.API.Controllers
@@ -32,8 +33,8 @@ namespace Hermes.API.Controllers
                 return HttpHandleErrors("Error on server", ex);
             }            
         }
-
-        [Authorize]
+        
+        [Authorize(Roles="Admin")]
         [HttpPost]
         public async Task<JsonResult> PostReporter([FromBody] RegisterReporter reporterFromBody)
         {
@@ -47,8 +48,8 @@ namespace Hermes.API.Controllers
                 return HttpHandleErrors("Error", ex);
             }
         }
-
-        [Authorize]
+        
+        [Authorize(Roles ="Admin")]
         [HttpPost("fileupload/{id}")]        
         public async Task<JsonResult> PostReporterUpload(int id, [FromBody] InputImageRequest files)
         {

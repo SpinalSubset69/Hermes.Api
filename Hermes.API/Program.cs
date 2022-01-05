@@ -1,5 +1,4 @@
 using Hermes.API.Extensions;
-using Hermes.API.Middlewares;
 using Hermes.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Services Extensions
-builder.Services.ServiceExtensionsMethod();
+builder.Services.ServiceExtensionsMethod(builder.Configuration);
 
 //Db Context
 builder.Services.AddDbContext<HermesDbContext>(options =>
@@ -55,7 +54,10 @@ app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseCors("CorsPolicy");
-app.UseMiddleware<AuthMiddleware>();
+
+//Must go above authorization
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();

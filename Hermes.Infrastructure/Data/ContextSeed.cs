@@ -48,11 +48,8 @@ namespace Hermes.Infrastructure.Data
                     var admins = JsonSerializer.Deserialize<List<Reporter>>(adminData);
 
                     foreach(var admin in admins)
-                    {                        
-                        GetHMACSHA512(admin.Password, out string passwordHashed, out string hashedSalt);
-                        admin.Password = passwordHashed;
-                        admin.Salt = hashedSalt;
-
+                    {                                                
+                        admin.Password = GetSha256(admin.Password);                        
                         context.Add(admin);                       
                     }
 
@@ -66,31 +63,19 @@ namespace Hermes.Infrastructure.Data
             }
         }
 
-        private static void GetHMACSHA512(string plainText, out string hashedText, out string hashedSalt)
+        public static string GetSha256(string plainText)
         {
-            using (var hmac = new HMACSHA512())
+            SHA256 sha256 = SHA256Managed.Create();
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            byte[] stream = null;
+            StringBuilder sb = new StringBuilder();
+            stream = sha256.ComputeHash(encoding.GetBytes(plainText));
+            for (int i = 0; i < stream.Length; i++)
             {
-                var saltStream = hmac.Key;
-                var passwordStream = hmac.ComputeHash(Encoding.UTF8.GetBytes(plainText));
-
-                var sb = new StringBuilder();
-
-                for (int i = 0; i < saltStream.Length; i++)
-                {
-                    sb.AppendFormat("{0:x2}", saltStream[i]);
-                }
-
-                hashedSalt = sb.ToString();
-
-                sb.Clear();
-
-                for (int i = 0; i < passwordStream.Length; i++)
-                {
-                    sb.AppendFormat("{0:x2}", passwordStream[i]);
-                }
-
-                hashedText = sb.ToString();
+                sb.AppendFormat("{0:x2}", stream[i]);
             }
+
+            return sb.ToString();
         }
     }
 }

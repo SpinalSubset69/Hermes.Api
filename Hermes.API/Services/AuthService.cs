@@ -34,7 +34,8 @@ namespace Hermes.API.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, reporter.Name),
-                new Claim(ClaimTypes.Role, reporter.Role.Name == "Admin" ? "Admin" : "Reporter")
+                new Claim(ClaimTypes.Role, reporter.Role.Name == "Admin" ? "Admin" : "Reporter"),
+                new Claim(ClaimTypes.Email, reporter.Email)
             };
 
 
@@ -48,7 +49,7 @@ namespace Hermes.API.Services
             var expiresIn = DateTime.Now.AddMinutes(30);
 
             //Payload
-            var payload = new JwtSecurityToken(claims: claims, expires: expiresIn, signingCredentials: credentials);
+            var payload = new JwtSecurityToken(claims: claims, expires: expiresIn, signingCredentials: credentials, issuer:reporter.Id.ToString());
             var jwt = new JwtSecurityTokenHandler().WriteToken(payload);
 
             return jwt;
@@ -65,13 +66,13 @@ namespace Hermes.API.Services
                 ValidateIssuer = false,
                 ValidateAudience = false
             }, out SecurityToken validatedToken);
-
+            
             return (JwtSecurityToken)validatedToken;
         }
 
         public async Task<ReporterToReturnDto> GetReporterbasedOnTokenAsync(string jwt)
         {
-            var sessionToken = VerifyJwt(jwt);
+            var sessionToken = VerifyJwt(jwt);                       
             var spec = new ReporterWithIncludesByIdSpecification(Convert.ToInt32(sessionToken.Issuer));
             var reporter = await _unitOfWork.Reporters.FindByIdAsync(spec);
 
@@ -87,12 +88,12 @@ namespace Hermes.API.Services
         {
             var reporter = await _unitOfWork.Reporters.GetReporterByEmail(loginInfo.Email);
 
-            if(reporter == null)
+            if (reporter == null)
             {
                 throw new NotFoundException("Reporter Not Found");
-            }            
+            }
 
-            if(!VerifiedpasswordHased(loginInfo.Password, reporter.Password, reporter.Salt))
+            if (Encrypt.GetSha256(loginInfo.Password ) != reporter.Password)
             {
                 throw new ApplicationException("Invalid Credentials");
             }
@@ -102,24 +103,7 @@ namespace Hermes.API.Services
 
             var session = new SessionDto(token, expiresIn.ToString());
             return session;
-        }
-       
-        private bool VerifiedpasswordHased(string password, string passwordHash, string saltHased)
-        {
-            using(var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(saltHased)))
-            {
-                var passswordStream = Encoding.UTF8.GetBytes(passwordHash);
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-                var sb = new StringBuilder();
-
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    sb.AppendFormat("{0:x2}", computedHash[i]);
-                }
-                return passwordHash == sb.ToString();
-            }
-        }
+        }              
     }
 }
 
